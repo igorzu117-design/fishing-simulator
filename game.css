@@ -1,0 +1,680 @@
+/* Базовые стили для сброса отступов и настройки шрифта */
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #87CEEB;
+    user-select: none;
+}
+
+/* Контейнер для 3D графики */
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Слои для UI */
+.ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    /* Пропускаем клики сквозь фон */
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Стиль окон меню */
+.menu-box {
+    background: rgba(20, 30, 40, 0.85);
+    padding: 50px 70px;
+    border-radius: 16px;
+    text-align: center;
+    pointer-events: auto;
+    /* Включаем клики внутри меню */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+}
+
+/* Заголовок игры */
+h1 {
+    color: #e0f2f1;
+    margin-top: 0;
+    margin-bottom: 40px;
+    font-size: 3.5rem;
+    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+h2.settings-title {
+    color: white;
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 30px;
+    text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+/* Кнопки меню */
+button {
+    display: block;
+    width: 280px;
+    padding: 16px;
+    margin: 18px auto;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%);
+    border: 2px solid #1b5e20;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    transition: all 0.15s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background: linear-gradient(180deg, #45a049 0%, #1b5e20 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Элементы настроек */
+.setting-item {
+    color: white;
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 300px;
+    font-size: 1.2rem;
+}
+
+input[type=range] {
+    cursor: pointer;
+}
+
+input[type=checkbox] {
+    transform: scale(1.5);
+    cursor: pointer;
+}
+
+/* Игровой интерфейс */
+.game-hud-text {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    color: white;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 4px black;
+    font-weight: bold;
+}
+
+.hud-hint {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #dcedc8;
+    margin-top: 5px;
+}
+
+/* Кнопка выхода в интерфейсе игры */
+.exit-btn-container {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    pointer-events: auto;
+}
+
+.exit-btn-container button {
+    width: 180px;
+    background: linear-gradient(180deg, #E53935 0%, #B71C1C 100%);
+    border-color: #880E4F;
+}
+
+.exit-btn-container button:hover {
+    background: linear-gradient(180deg, #EF5350 0%, #C62828 100%);
+}
+
+/* РЫБАЛКА UI */
+#fishing-text-container {
+    position: absolute;
+    top: 30%;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+}
+
+#fishing-text {
+    font-size: 3rem;
+    color: #ff5252;
+    text-shadow: 2px 2px 5px black;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+#casting-bar-container {
+    position: absolute;
+    bottom: 15%;
+    width: 400px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 12px;
+    z-index: 100;
+}
+
+#casting-bar {
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to right, red 0%, red 30%, yellow 50%, green 100%);
+    border-radius: 15px;
+    position: relative;
+    border: 2px solid white;
+}
+
+#casting-arrow {
+    width: 6px;
+    height: 40px;
+    background: white;
+    border: 2px solid black;
+    position: absolute;
+    top: -7px;
+    left: 0%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+/* ЭКРАН ЗАГРУЗКИ */
+#loading-screen {
+    background: #121212;
+    z-index: 9991;
+    /* Должен быть поверх всего */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-content {
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4CAF50, #81C784);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+    transition: width 0.3s ease-out;
+}
+
+#progress-text {
+    color: #4CAF50;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+#interaction-hint {
+    position: absolute;
+    bottom: 35%;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+}
+
+.hint-box {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border: 2px solid #4CAF50;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+}
+
+/* ДИАЛОГОВАЯ СИСТЕМА */
+.dialogue-box {
+    position: absolute;
+    bottom: 50px;
+    width: 60%;
+    min-height: 150px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    pointer-events: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.dialogue-npc-name {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #38bdf8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.dialogue-content {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.dialogue-options {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.dialogue-option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    width: auto;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.dialogue-option-btn:hover {
+    background: #38bdf8;
+    color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+}
+
+/* МАГАЗИН */
+.shop-window {
+    width: 80%;
+    max-width: 900px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    pointer-events: auto;
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7);
+    color: white;
+    animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.shop-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.close-shop {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 2.5rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+.close-shop:hover {
+    color: #ef4444;
+    background: none;
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+}
+
+.shop-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.shop-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: #38bdf8;
+    transform: translateY(-5px);
+}
+
+.item-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.item-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #f1f5f9;
+}
+
+.item-price {
+    font-size: 1rem;
+    color: #38bdf8;
+    margin-bottom: 20px;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.buy-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 10px;
+    margin: 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.buy-btn:hover {
+    background: linear-gradient(135deg, #7dd3fc 0%, #3b82f6 100%);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+}
+
+/* ИНВЕНТАРЬ BUTTON */
+.inventory-btn-container {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    pointer-events: auto;
+}
+
+#inventory-btn {
+    width: auto;
+    padding: 12px 25px;
+    margin: 0;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: none;
+    box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.3);
+}
+
+#inventory-btn:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+/* ОКНО УЛОВА */
+.catch-window {
+    width: 90%;
+    max-width: 500px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(25px);
+    border-radius: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    text-align: center;
+    pointer-events: auto;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(56, 189, 248, 0.2);
+    animation: catchPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes catchPop {
+    from {
+        transform: scale(0.5) translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.catch-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+#catch-preview-container {
+    width: 100%;
+    height: 300px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    cursor: default;
+}
+
+.catch-info {
+    margin-bottom: 30px;
+}
+
+#catch-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.catch-stats {
+    font-size: 1.2rem;
+    color: #94a3b8;
+}
+
+.ok-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+    border: none;
+    padding: 15px;
+    font-size: 1.2rem;
+    border-radius: 15px;
+}
+
+/* ОКНО ИНВЕНТАРЯ */
+.inventory-window {
+    width: 85%;
+    max-width: 1000px;
+    height: 70vh;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    pointer-events: auto;
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7);
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.inventory-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: white;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 2.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    box-shadow: none;
+}
+
+.close-btn:hover {
+    color: #ef4444;
+    background: none;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    overflow-y: auto;
+    padding-right: 15px;
+}
+
+/* Стили для скроллбара */
+.inventory-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.inventory-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.inventory-grid::-webkit-scrollbar-thumb {
+    background: #38bdf8;
+    border-radius: 3px;
+}
+
+.inventory-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.inventory-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #38bdf8;
+    transform: scale(1.03);
+}
+
+.inv-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.inv-name {
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.inv-weight {
+    font-size: 0.9rem;
+    color: #94a3b8;
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рыбалка 3D</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+
+<body>
+    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <div id="loading-screen" class="ui-layer">
+        <div class="loading-content">
+            <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Загрузка ресурсов...</h1>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="progress-text">0%</div>
+        </div>
+    </div>
+
+    <!-- Контейнер для 3D холста -->
+    <div id="canvas-container"></div>
+
+
+    <!-- ИГРОВОЙ ИНТЕРФЕЙС (HUD) -->
+    <div id="game-hud" class="ui-layer hidden" style="background: none;">
+        <div class="game-hud-text">
+            Свободный режим
+            <div class="hud-hint">WASD / Стрелки - Движение | ПКМ - Осмотр | ЛКМ - Заброс удочки</div>
+        </div>
+        <div class="inventory-btn-container">
+            <button id="inventory-btn" onclick="openInventory(event)">🎒 Инвентарь</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- РЫБАЛКА UI -->
+    <div id="fishing-ui" class="ui-layer hidden" style="background: none; pointer-events: none;">
+        <div id="fishing-text-container" class="hidden">
+            <h2 id="fishing-text">Ждём улов...</h2>
+        </div>
+
+        <div id="casting-bar-container" class="hidden">
+            <div id="casting-bar">
+                <div id="casting-arrow"></div>
+            </div>
+            <p style="text-align: center; color: white; text-shadow: 1px 1px 2px black; font-weight: bold;">ЛКМ:
+                Остановить стрелку</p>
+        </div>
+    </div>
+
+    <!-- ПОДСКАЗКА ВЗАИМОДЕЙСТВИЯ (Вынесена из слоя рыбалки) -->
+    <div id="interaction-hint" class="ui-layer hidden" style="background: none; pointer-events: none;">
+        <div class="hint-box">E - Говорить</div>
+    </div>
+
+    <!-- ДИАЛОГОВОЕ ОКНО -->
+    <div id="dialogue-ui" class="ui-layer hidden">
+        <div class="dialogue-box">
+            <div class="dialogue-npc-name">Продавец</div>
+            <div id="dialogue-text" class="dialogue-content">Привет! Ты что нибудь хотел?</div>
+            <div id="dialogue-options" class="dialogue-options">
+                <!-- Кнопки будут добавляться динамически -->
+            </div>
+        </div>
+    </div>
+
+    <!-- МАГАЗИН УДОЧЕК -->
+    <div id="rod-shop-ui" class="ui-layer hidden">
+        <div class="shop-window">
+            <div class="shop-header">
+                <h2>Магазин удочек</h2>
+                <button class="close-shop" onclick="closeShop('rod-shop-ui')">&times;</button>
+            </div>
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <div class="item-icon">🎣</div>
+                    <div class="item-name">Старая удочка</div>
+                    <div class="item-price">100 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🎣</div>
+                    <div class="item-name">Бамбуковая удочка</div>
+                    <div class="item-price">500 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🎣</div>
+                    <div class="item-name">Стеклопластиковая удочка</div>
+                    <div class="item-price">1500 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🎣</div>
+                    <div class="item-name">Углепластиковая удочка</div>
+                    <div class="item-price">5000 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🎣</div>
+                    <div class="item-name">Мастерская удочка</div>
+                    <div class="item-price">15000 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- МАГАЗИН ЛОДОК -->
+    <div id="boat-shop-ui" class="ui-layer hidden">
+        <div class="shop-window">
+            <div class="shop-header">
+                <h2>Магазин лодок</h2>
+                <button class="close-shop" onclick="closeShop('boat-shop-ui')">&times;</button>
+            </div>
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <div class="item-icon">🛶</div>
+                    <div class="item-name">Деревянная лодка</div>
+                    <div class="item-price">2000 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🚤</div>
+                    <div class="item-name">Моторная лодка</div>
+                    <div class="item-price">10000 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🛥️</div>
+                    <div class="item-name">Катер</div>
+                    <div class="item-price">50000 coins</div>
+                    <button class="buy-btn">Купить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- ОКНО УЛОВА -->
+    <div id="catch-ui" class="ui-layer hidden">
+        <div class="catch-window">
+            <div class="catch-title">ТЫ СЛОВИЛ РЫБУ!</div>
+            <div id="catch-preview-container"></div>
+            <div class="catch-info">
+                <div id="catch-name">Селёдка</div>
+                <div class="catch-stats">
+                    <span id="catch-weight">1.2 кг</span> | <span id="catch-price">120 монет</span>
+                </div>
+            </div>
+            <button class="ok-btn" onclick="closeCatchWindow(event)">ОК</button>
+        </div>
+    </div>
+
+    <!-- ОКНО ИНВЕНТАРЯ -->
+    <div id="inventory-ui" class="ui-layer hidden">
+        <div class="inventory-window">
+            <div class="inventory-header">
+                <h2>Ваш улов</h2>
+                <button class="close-btn" onclick="closeInventory(event)">&times;</button>
+            </div>
+            <div id="inventory-list" class="inventory-grid">
+                <!-- Сюда будут добавляться рыбы -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение Three.js (Библиотека для 3D графики) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
