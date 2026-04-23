@@ -1037,11 +1037,34 @@ function closeCatchWindow(event) {
     document.getElementById('catch-ui').classList.add('hidden');
 }
 
+let rodInventory = [];
+
+window.switchInvTab = function (tabName) {
+    const tabFishes = document.getElementById('tab-fishes');
+    const tabRods = document.getElementById('tab-rods');
+    const listFishes = document.getElementById('inventory-list-fishes');
+    const listRods = document.getElementById('inventory-list-rods');
+
+    if (tabName === 'fishes') {
+        tabFishes.classList.add('active');
+        tabRods.classList.remove('active');
+        listFishes.classList.remove('hidden');
+        listRods.classList.add('hidden');
+    } else if (tabName === 'rods') {
+        tabRods.classList.add('active');
+        tabFishes.classList.remove('active');
+        listRods.classList.remove('hidden');
+        listFishes.classList.add('hidden');
+    }
+}
+
 function openInventory(event) {
     if (event) event.stopPropagation();
     if (dialogueState !== 'none') return;
     document.getElementById('inventory-ui').classList.remove('hidden');
+    switchInvTab('fishes');
     renderInventory();
+    renderRodsInventory();
 }
 
 function closeInventory(event) {
@@ -1050,7 +1073,7 @@ function closeInventory(event) {
 }
 
 function renderInventory() {
-    const list = document.getElementById('inventory-list');
+    const list = document.getElementById('inventory-list-fishes');
     list.innerHTML = '';
 
     inventory.forEach((fish, index) => {
@@ -1062,6 +1085,21 @@ function renderInventory() {
             <div class="inv-weight">${fish.weight.toFixed(2)} кг</div>
         `;
         item.onclick = () => selectFishFromInventory(index);
+        list.appendChild(item);
+    });
+}
+
+function renderRodsInventory() {
+    const list = document.getElementById('inventory-list-rods');
+    list.innerHTML = '';
+
+    rodInventory.forEach((rod, index) => {
+        const item = document.createElement('div');
+        item.className = 'inventory-item';
+        item.innerHTML = `
+            <div class="inv-icon">${rod.icon}</div>
+            <div class="inv-name">${rod.name}</div>
+        `;
         list.appendChild(item);
     });
 }

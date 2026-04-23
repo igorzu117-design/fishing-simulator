@@ -601,10 +601,38 @@ input[type=checkbox] {
     padding-bottom: 15px;
 }
 
-.inventory-header h2 {
+.inventory-tabs {
+    display: flex;
+    gap: 15px;
+}
+
+.inv-tab {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    padding: 10px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: all 0.2s;
+    width: auto;
     margin: 0;
-    font-size: 2rem;
+    box-shadow: none;
+    text-transform: none;
+}
+
+.inv-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    transform: translateY(-2px);
+}
+
+.inv-tab.active {
+    background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
     color: white;
+    border-color: #38bdf8;
+    box-shadow: 0 4px 10px rgba(56, 189, 248, 0.4);
 }
 
 .close-btn {

@@ -160,11 +160,17 @@
     <div id="inventory-ui" class="ui-layer hidden">
         <div class="inventory-window">
             <div class="inventory-header">
-                <h2>Ваш улов</h2>
+                <div class="inventory-tabs">
+                    <button class="inv-tab active" id="tab-fishes" onclick="switchInvTab('fishes')">Рыбы</button>
+                    <button class="inv-tab" id="tab-rods" onclick="switchInvTab('rods')">Удочки</button>
+                </div>
                 <button class="close-btn" onclick="closeInventory(event)">&times;</button>
             </div>
-            <div id="inventory-list" class="inventory-grid">
+            <div id="inventory-list-fishes" class="inventory-grid">
                 <!-- Сюда будут добавляться рыбы -->
+            </div>
+            <div id="inventory-list-rods" class="inventory-grid hidden">
+                <!-- Сюда будут добавляться удочки -->
             </div>
         </div>
     </div>
