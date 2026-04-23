@@ -1199,6 +1199,12 @@ function showRodDetails(index) {
         document.getElementById('stat-common').innerText = rod.stats.common;
         document.getElementById('stat-uncommon').innerText = rod.stats.uncommon;
         document.getElementById('stat-rare').innerText = rod.stats.rare;
+        if (rod.stats.epic) {
+            document.getElementById('stat-epic-container').classList.remove('hidden');
+            document.getElementById('stat-epic').innerText = rod.stats.epic;
+        } else {
+            document.getElementById('stat-epic-container').classList.add('hidden');
+        }
     }
 
     const container = document.getElementById('details-rod-preview');
@@ -1260,6 +1266,70 @@ function closeRodDetails(event) {
 }
 window.closeRodDetails = closeRodDetails;
 window.showRodDetails = showRodDetails;
+
+window.buyItem = function (type) {
+    if (type === 'bamboo') {
+        const price = 500;
+        if (coins >= price) {
+            if (rodInventory.find(r => r.name === "Бамбуковая удочка")) {
+                console.log("Удочка уже куплена!");
+                return;
+            }
+            coins -= price;
+            updateCurrencyUI();
+
+            rodInventory.push({
+                name: "Бамбуковая удочка",
+                model: "bamboo_fishing_rod.glb",
+                stats: {
+                    common: "90%",
+                    uncommon: "70%",
+                    rare: "20%",
+                    epic: "1%"
+                }
+            });
+            renderRodsInventory();
+            replacePlayerRod("bamboo_fishing_rod.glb");
+            // Assuming closeShop is accessible here, normally window.closeShop
+            if (typeof closeShop === 'function') closeShop('rod-shop-ui');
+        } else {
+            console.log("Недостаточно монет для покупки!");
+        }
+    }
+};
+
+function replacePlayerRod(modelPath) {
+    if (fishingRod) {
+        if (playerHandBone && playerHandBone.children.includes(fishingRod)) {
+            playerHandBone.remove(fishingRod);
+        } else if (playerModel && playerModel.children.includes(fishingRod)) {
+            playerModel.remove(fishingRod);
+        }
+    }
+
+    const loader = window.gltfLoader || new THREE.GLTFLoader();
+    loader.load(modelPath, (gltf) => {
+        const rawScene = gltf.scene;
+        const box = new THREE.Box3().setFromObject(rawScene);
+        const center = box.getCenter(new THREE.Vector3());
+
+        fishingRod = new THREE.Group();
+        rawScene.position.sub(center);
+        fishingRod.add(rawScene);
+
+        if (playerHandBone) {
+            fishingRod.scale.set(100, 100, 100);
+            playerHandBone.add(fishingRod);
+            // Those exact coords are managed by animate loop, but setting them initially avoids 1-frame pop
+            fishingRod.position.set(25.20, 41.00, 12.80);
+            fishingRod.rotation.set(-0.04 * Math.PI, -4.39 * Math.PI, 0.85 * Math.PI);
+        } else if (playerModel) {
+            fishingRod.scale.set(50, 50, 50);
+            playerModel.add(fishingRod);
+            fishingRod.position.set(20, 100, 20);
+        }
+    });
+}
 
 function selectFishFromInventory(index) {
     closeInventory();

@@ -79,7 +79,7 @@
                     <div class="item-icon">🎣</div>
                     <div class="item-name">Бамбуковая удочка</div>
                     <div class="item-price">500 coins</div>
-                    <button class="buy-btn">Купить</button>
+                    <button class="buy-btn" onclick="buyItem('bamboo')">Купить</button>
                 </div>
                 <div class="shop-item">
                     <div class="item-icon">🎣</div>
@@ -190,6 +190,7 @@
                         <li>Обычный: <span id="stat-common">100%</span></li>
                         <li>Необычный: <span id="stat-uncommon">50%</span></li>
                         <li>Редкий: <span id="stat-rare">5%</span></li>
+                        <li id="stat-epic-container" class="hidden">Эпический: <span id="stat-epic">0%</span></li>
                     </ul>
                 </div>
             </div>
