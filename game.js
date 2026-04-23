@@ -1037,7 +1037,10 @@ function closeCatchWindow(event) {
     document.getElementById('catch-ui').classList.add('hidden');
 }
 
-let rodInventory = [];
+let activeRodPreviews = [];
+let rodInventory = [
+    { name: "Старая удочка", model: "fishing_rod.glb" }
+];
 
 window.switchInvTab = function (tabName) {
     const tabFishes = document.getElementById('tab-fishes');
@@ -1093,15 +1096,85 @@ function renderRodsInventory() {
     const list = document.getElementById('inventory-list-rods');
     list.innerHTML = '';
 
+    // Очищаем старые рендеры
+    activeRodPreviews.forEach(p => {
+        if (p.renderer && p.renderer.domElement.parentNode) {
+            p.renderer.domElement.parentNode.removeChild(p.renderer.domElement);
+        }
+    });
+    activeRodPreviews = [];
+
     rodInventory.forEach((rod, index) => {
         const item = document.createElement('div');
-        item.className = 'inventory-item';
+        item.className = 'inventory-item rod-inventory-item';
         item.innerHTML = `
-            <div class="inv-icon">${rod.icon}</div>
             <div class="inv-name">${rod.name}</div>
+            <div id="rod-preview-${index}" class="rod-preview-container"></div>
         `;
         list.appendChild(item);
+
+        const container = document.getElementById(`rod-preview-${index}`);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, (container.offsetWidth || 150) / 150, 0.1, 1000);
+        camera.position.set(0, 0, 5);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.offsetWidth || 150, 150);
+        container.appendChild(renderer.domElement);
+
+        const light = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(light);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 5, 5);
+        scene.add(dirLight);
+
+        if (rod.model) {
+            const loader = window.gltfLoader || new THREE.GLTFLoader();
+            loader.load(rod.model, (gltf) => {
+                let rodObject = gltf.scene;
+                // Масштабируем:
+                rodObject.scale.setScalar(1.5);
+
+                // Центрируем модель
+                const box = new THREE.Box3().setFromObject(rodObject);
+                const center = box.getCenter(new THREE.Vector3());
+                rodObject.position.sub(center);
+
+                const wrapper = new THREE.Group();
+                wrapper.add(rodObject);
+                // Поворачиваем чтобы было красиво
+                wrapper.rotation.z = Math.PI / 4;
+                scene.add(wrapper);
+
+                activeRodPreviews.push({
+                    renderer: renderer,
+                    scene: scene,
+                    camera: camera,
+                    object: wrapper
+                });
+            });
+        }
     });
+
+    if (!window.rodPreviewLoopStarted) {
+        window.rodPreviewLoopStarted = true;
+        function updateRodPreviews() {
+            requestAnimationFrame(updateRodPreviews);
+            if (!document.getElementById('inventory-ui').classList.contains('hidden') && document.getElementById('tab-rods').classList.contains('active')) {
+                activeRodPreviews.forEach(p => {
+                    if (p.object) {
+                        p.object.rotation.y += 0.01;
+                        p.object.rotation.x += 0.005;
+                    }
+                    if (p.renderer && p.scene && p.camera) {
+                        p.renderer.render(p.scene, p.camera);
+                    }
+                });
+            }
+        }
+        updateRodPreviews();
+    }
 }
 
 function selectFishFromInventory(index) {
