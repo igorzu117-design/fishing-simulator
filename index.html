@@ -175,6 +175,27 @@
         </div>
     </div>
 
+    <!-- МЕНЮ ПОДРОБНОСТЕЙ УДОЧКИ -->
+    <div id="rod-details-ui" class="ui-layer hidden" style="z-index: 20;">
+        <div class="rod-details-window">
+            <button class="close-btn" onclick="closeRodDetails(event)">&times;</button>
+            <div class="rod-details-content">
+                <div class="rod-details-left">
+                    <h2 id="details-rod-name">Название удочки</h2>
+                    <div id="details-rod-preview" class="details-preview-container"></div>
+                </div>
+                <div class="rod-details-right">
+                    <h3>Характеристики:</h3>
+                    <ul class="rod-stats-list">
+                        <li>Обычный: <span id="stat-common">100%</span></li>
+                        <li>Необычный: <span id="stat-uncommon">50%</span></li>
+                        <li>Редкий: <span id="stat-rare">5%</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Подключение Three.js (Библиотека для 3D графики) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
