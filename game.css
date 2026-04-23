@@ -714,3 +714,83 @@ input[type=checkbox] {
     background: radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 80%);
     border-radius: 12px;
 }
+
+/* МЕНЮ ПОДРОБНОСТЕЙ УДОЧКИ */
+.rod-details-window {
+    width: 65%;
+    max-width: 800px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(25px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 40px;
+    pointer-events: auto;
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    color: white;
+}
+
+.rod-details-window .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.rod-details-content {
+    display: flex;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.rod-details-left {
+    flex: 1;
+    text-align: center;
+}
+
+.rod-details-left h2 {
+    margin-top: 0;
+    color: #fbbf24;
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.details-preview-container {
+    width: 100%;
+    height: 300px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+    border-radius: 20px;
+    margin-top: 15px;
+}
+
+.rod-details-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.rod-details-right h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    margin-top: 0;
+    color: #f1f5f9;
+}
+
+.rod-stats-list {
+    list-style: none;
+    padding: 0;
+    font-size: 1.3rem;
+    line-height: 2.5;
+    color: #94a3b8;
+}
+
+.rod-stats-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rod-stats-list span {
+    color: #38bdf8;
+    font-weight: bold;
+    float: right;
+}

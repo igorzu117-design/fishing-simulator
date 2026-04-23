@@ -1039,7 +1039,15 @@ function closeCatchWindow(event) {
 
 let activeRodPreviews = [];
 let rodInventory = [
-    { name: "Старая удочка", model: "fishing_rod.glb" }
+    {
+        name: "Старая удочка",
+        model: "fishing_rod.glb",
+        stats: {
+            common: "100%",
+            uncommon: "50%",
+            rare: "5%"
+        }
+    }
 ];
 
 window.switchInvTab = function (tabName) {
@@ -1107,6 +1115,7 @@ function renderRodsInventory() {
     rodInventory.forEach((rod, index) => {
         const item = document.createElement('div');
         item.className = 'inventory-item rod-inventory-item';
+        item.onclick = () => showRodDetails(index);
         item.innerHTML = `
             <div class="inv-name">${rod.name}</div>
             <div id="rod-preview-${index}" class="rod-preview-container"></div>
@@ -1176,6 +1185,81 @@ function renderRodsInventory() {
         updateRodPreviews();
     }
 }
+
+let detailsPreviewActive = false;
+let detailsRenderer, detailsScene, detailsCamera, detailsObj;
+
+function showRodDetails(index) {
+    const rod = rodInventory[index];
+    const ui = document.getElementById('rod-details-ui');
+    ui.classList.remove('hidden');
+
+    document.getElementById('details-rod-name').innerText = rod.name;
+    if (rod.stats) {
+        document.getElementById('stat-common').innerText = rod.stats.common;
+        document.getElementById('stat-uncommon').innerText = rod.stats.uncommon;
+        document.getElementById('stat-rare').innerText = rod.stats.rare;
+    }
+
+    const container = document.getElementById('details-rod-preview');
+    if (!detailsRenderer) {
+        detailsScene = new THREE.Scene();
+        detailsCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight || 1, 0.1, 1000);
+        detailsCamera.position.set(0, 0, 5);
+
+        detailsRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        detailsRenderer.setSize(container.offsetWidth, container.offsetHeight);
+        container.appendChild(detailsRenderer.domElement);
+
+        const light = new THREE.AmbientLight(0xffffff, 1.5);
+        detailsScene.add(light);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 5, 5);
+        detailsScene.add(dirLight);
+    }
+
+    if (detailsObj) {
+        detailsScene.remove(detailsObj);
+        detailsObj = null;
+    }
+
+    if (rod.model) {
+        const loader = window.gltfLoader || new THREE.GLTFLoader();
+        loader.load(rod.model, (gltf) => {
+            const rodObject = gltf.scene;
+            rodObject.scale.setScalar(3.0);
+
+            const box = new THREE.Box3().setFromObject(rodObject);
+            const center = box.getCenter(new THREE.Vector3());
+            rodObject.position.sub(center);
+
+            detailsObj = new THREE.Group();
+            detailsObj.add(rodObject);
+            detailsObj.rotation.z = Math.PI / 4;
+            detailsScene.add(detailsObj);
+        });
+    }
+
+    detailsPreviewActive = true;
+    function updateDetails() {
+        if (detailsPreviewActive) {
+            requestAnimationFrame(updateDetails);
+            if (detailsObj) {
+                detailsObj.rotation.y += 0.01;
+            }
+            detailsRenderer.render(detailsScene, detailsCamera);
+        }
+    }
+    updateDetails();
+}
+
+function closeRodDetails(event) {
+    if (event) event.stopPropagation();
+    document.getElementById('rod-details-ui').classList.add('hidden');
+    detailsPreviewActive = false;
+}
+window.closeRodDetails = closeRodDetails;
+window.showRodDetails = showRodDetails;
 
 function selectFishFromInventory(index) {
     closeInventory();
