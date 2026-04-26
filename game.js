@@ -1060,7 +1060,7 @@ function showCatchWindow(fish) {
 
     if (fModel) {
         catchPreviewFish = fModel.clone();
-        catchPreviewFish.scale.setScalar(1.2);
+        catchPreviewFish.scale.setScalar(0.6);
         catchPreviewScene.add(catchPreviewFish);
     }
 
