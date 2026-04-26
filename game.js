@@ -35,6 +35,7 @@ let fishingRod; // Модель удочки
 
 // --- НОВЫЕ ПЕРЕМЕННЫЕ: Рыбалка ---
 let fishingState = 'none'; // 'none', 'casting', 'animating', 'fishing'
+let fishingWaitTime = 0;
 let castingArrowPos = 0;
 let castingArrowDir = 1;
 let castAction, fishIdleAction;
@@ -387,7 +388,10 @@ function init3D() {
             fishModels['common'] = gltf.scene;
         });
         gltfLoader.load('perch_weever_sea_bass_fish.glb', (gltf) => {
-            fishModels['uncommon'] = gltf.scene;
+            const wrapper = new THREE.Group();
+            gltf.scene.scale.setScalar(0.4);
+            wrapper.add(gltf.scene);
+            fishModels['uncommon'] = wrapper;
         });
         gltfLoader.load('neon_tetra_aquarium_fish.glb', (gltf) => {
             fishModels['rare'] = gltf.scene;
@@ -544,6 +548,7 @@ function init3D() {
                         castAction.play();
                     } else {
                         fishingState = 'fishing';
+                        fishingWaitTime = 0;
                         if (fishIdleAction) {
                             fishIdleAction.reset();
                             fishIdleAction.play();
@@ -690,7 +695,9 @@ function animate() {
 
         // --- ЛОГИКА ШАНСА УЛОВА ---
         if (fishingState === 'fishing') {
-            if (Math.random() < 0.005) { // ~0.5% шанс каждый кадр (~1 раз в 3-5 секунд)
+            fishingWaitTime += delta;
+            // Уменьшенный базовый шанс, чтобы дольше ждать
+            if (Math.random() < 0.002) {
                 catchFish();
             }
         }
@@ -994,10 +1001,18 @@ function catchFish() {
         let pct = (str) => parseFloat(str) / 100;
         let roll = Math.random();
 
-        if (rodObj.stats.epic && roll <= pct(rodObj.stats.epic)) { rarity = 'epic'; caught = true; }
-        else if (rodObj.stats.rare && roll <= pct(rodObj.stats.rare)) { rarity = 'rare'; caught = true; }
-        else if (rodObj.stats.uncommon && roll <= pct(rodObj.stats.uncommon)) { rarity = 'uncommon'; caught = true; }
-        else if (rodObj.stats.common && roll <= pct(rodObj.stats.common)) { rarity = 'common'; caught = true; }
+        // Множитель времени: каждые 5с дают +50% к шансу (1.0 -> 1.5 -> 2.0 ...)
+        let timeMultiplier = 1.0 + (fishingWaitTime / 5.0) * 0.5;
+        timeMultiplier = Math.min(timeMultiplier, 10.0); // лимит х10
+
+        let epicC = (rodObj.stats.epic ? pct(rodObj.stats.epic) : 0) * timeMultiplier;
+        let rareC = (rodObj.stats.rare ? pct(rodObj.stats.rare) : 0) * timeMultiplier;
+        let uncommonC = (rodObj.stats.uncommon ? pct(rodObj.stats.uncommon) : 0) * timeMultiplier;
+
+        if (rodObj.stats.epic && roll <= epicC) { rarity = 'epic'; caught = true; }
+        else if (rodObj.stats.rare && roll <= epicC + rareC) { rarity = 'rare'; caught = true; }
+        else if (rodObj.stats.uncommon && roll <= epicC + rareC + uncommonC) { rarity = 'uncommon'; caught = true; }
+        else if (rodObj.stats.common && roll <= epicC + rareC + uncommonC + pct(rodObj.stats.common)) { rarity = 'common'; caught = true; }
     } else {
         caught = true;
     }
@@ -1008,15 +1023,18 @@ function catchFish() {
     }
 
     const FISH_DATA = {
-        common: { name: "Селёдка", icon: "🐟", priceBase: 20 },
-        uncommon: { name: "Морской окунь", icon: "🐠", priceBase: 60 },
-        rare: { name: "Неоновая рыба", icon: "🐡", priceBase: 150 },
-        epic: { name: "Золотая рыбка", icon: "🦈", priceBase: 500 }
+        common: { name: "Селёдка", icon: "🐟", minWeight: 0.5, maxWeight: 2.0, minPrice: 20, maxPrice: 180 },
+        uncommon: { name: "Морской окунь", icon: "🐠", minWeight: 2.0, maxWeight: 10.0, minPrice: 150, maxPrice: 500 },
+        rare: { name: "Неоновая рыба", icon: "🐡", minWeight: 0.1, maxWeight: 2.0, minPrice: 250, maxPrice: 750 },
+        epic: { name: "Золотая рыбка", icon: "🦈", minWeight: 0.05, maxWeight: 0.5, minPrice: 500, maxPrice: 1000 }
     };
 
     let fishInfo = FISH_DATA[rarity] || FISH_DATA['common'];
-    const weight = 0.5 + Math.random() * 1.5;
-    const price = Math.round(fishInfo.priceBase + (weight - 0.5) * (fishInfo.priceBase * 5));
+
+    // Взвешенная рандомная интерполяция
+    const p = Math.random();
+    const weight = fishInfo.minWeight + p * (fishInfo.maxWeight - fishInfo.minWeight);
+    const price = Math.round(fishInfo.minPrice + p * (fishInfo.maxPrice - fishInfo.minPrice));
 
     const caughtFish = {
         name: fishInfo.name,
