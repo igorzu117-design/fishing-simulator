@@ -395,15 +395,25 @@ function init3D() {
         });
         const normalizeMesh = (scene, target) => {
             const group = new THREE.Group();
-            const box = new THREE.Box3().setFromObject(scene);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
+            scene.updateMatrixWorld(true);
 
-            scene.position.sub(center);
+            const box = new THREE.Box3();
+            scene.traverse((child) => {
+                if (child.isMesh) {
+                    box.expandByObject(child);
+                }
+            });
+
+            if (!box.isEmpty()) {
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+
+                scene.position.sub(center);
+                const max = Math.max(size.x, size.y, size.z);
+                if (max > 0) group.scale.setScalar(target / max);
+            }
+
             group.add(scene);
-
-            const max = Math.max(size.x, size.y, size.z);
-            if (max > 0) group.scale.setScalar(target / max);
             return group;
         };
 
