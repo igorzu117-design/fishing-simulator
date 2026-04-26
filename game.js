@@ -1319,9 +1319,8 @@ function replacePlayerRod(modelPath) {
         if (modelPath.includes('bamboo')) {
             const size = box.getSize(new THREE.Vector3());
             const maxAxis = size.x > size.y ? (size.x > size.z ? 'x' : 'z') : (size.y > size.z ? 'y' : 'z');
-            // Сдвигаем на 45% длины вдоль главной оси, чтобы сместить хват с центра на конец (рукоятку).
-            // В случае необходимости реверса, пользователь может просто поменять минус на плюс.
-            rawScene.position[maxAxis] -= size[maxAxis] * 0.45;
+            // Уменьшено смещение с 45% на 25%, чтобы удочка "опустилась"
+            rawScene.position[maxAxis] -= size[maxAxis] * 0.25;
 
             // Немного сдвинем по локальной Z и X чтобы удочка идеальней легла в пальцы
             const secondAxis = maxAxis === 'y' ? 'z' : 'y';
