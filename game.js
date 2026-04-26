@@ -1083,6 +1083,10 @@ function showCatchWindow(fish) {
 
         const light = new THREE.AmbientLight(0xffffff, 1.5);
         catchPreviewScene.add(light);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        dirLight.position.set(5, 10, 5);
+        catchPreviewScene.add(dirLight);
     }
 
     if (catchPreviewFish) catchPreviewScene.remove(catchPreviewFish);
