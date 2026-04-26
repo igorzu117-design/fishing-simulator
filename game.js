@@ -393,11 +393,25 @@ function init3D() {
             wrapper.add(gltf.scene);
             fishModels['uncommon'] = wrapper;
         });
+        const normalizeMesh = (scene, target) => {
+            const group = new THREE.Group();
+            const box = new THREE.Box3().setFromObject(scene);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+
+            scene.position.sub(center);
+            group.add(scene);
+
+            const max = Math.max(size.x, size.y, size.z);
+            if (max > 0) group.scale.setScalar(target / max);
+            return group;
+        };
+
         gltfLoader.load('neon_tetra_aquarium_fish.glb', (gltf) => {
-            fishModels['rare'] = gltf.scene;
+            fishModels['rare'] = normalizeMesh(gltf.scene, 1.0);
         });
         gltfLoader.load('orange_fish.glb', (gltf) => {
-            fishModels['epic'] = gltf.scene;
+            fishModels['epic'] = normalizeMesh(gltf.scene, 1.0);
         });
 
         // Загружаем анимации держания рыбы
