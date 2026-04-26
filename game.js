@@ -400,6 +400,9 @@ function init3D() {
             const box = new THREE.Box3();
             scene.traverse((child) => {
                 if (child.isMesh) {
+                    if (!child.geometry.boundingBox) {
+                        child.geometry.computeBoundingBox();
+                    }
                     box.expandByObject(child);
                 }
             });
