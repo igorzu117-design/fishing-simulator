@@ -1032,7 +1032,10 @@ function catchFish() {
 
 function showCatchWindow(fish) {
     document.getElementById('catch-ui').classList.remove('hidden');
-    document.getElementById('catch-name').innerText = fish.name;
+    const nameEl = document.getElementById('catch-name');
+    nameEl.innerText = fish.name;
+    nameEl.className = `rarity-${fish.rarity || 'common'}`;
+
     document.getElementById('catch-weight').innerText = fish.weight.toFixed(2) + " кг";
     document.getElementById('catch-price').innerText = fish.price + " монет";
 
@@ -1133,9 +1136,11 @@ function renderInventory() {
     inventory.forEach((fish, index) => {
         const item = document.createElement('div');
         item.className = 'inventory-item';
+        // Цвет для названия рыбы в инвентаре
+        const rColorCls = fish.rarity ? `rarity-${fish.rarity}` : 'rarity-common';
         item.innerHTML = `
             <div class="inv-icon">${fish.icon}</div>
-            <div class="inv-name">${fish.name}</div>
+            <div class="inv-name ${rColorCls}">${fish.name}</div>
             <div class="inv-weight">${fish.weight.toFixed(2)} кг</div>
         `;
         item.onclick = () => selectFishFromInventory(index);
