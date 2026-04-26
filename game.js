@@ -392,6 +392,9 @@ function init3D() {
         gltfLoader.load('neon_tetra_aquarium_fish.glb', (gltf) => {
             fishModels['rare'] = gltf.scene;
         });
+        gltfLoader.load('orange_fish.glb', (gltf) => {
+            fishModels['epic'] = gltf.scene;
+        });
 
         // Загружаем анимации держания рыбы
         fbxLoader.load('Pistol Idle.fbx', (fbx) => {
@@ -1008,7 +1011,7 @@ function catchFish() {
         common: { name: "Селёдка", icon: "🐟", priceBase: 20 },
         uncommon: { name: "Морской окунь", icon: "🐠", priceBase: 60 },
         rare: { name: "Неоновая рыба", icon: "🐡", priceBase: 150 },
-        epic: { name: "Мистический карп", icon: "🦈", priceBase: 500 }
+        epic: { name: "Золотая рыбка", icon: "🦈", priceBase: 500 }
     };
 
     let fishInfo = FISH_DATA[rarity] || FISH_DATA['common'];
