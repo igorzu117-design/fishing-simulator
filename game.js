@@ -1410,8 +1410,8 @@ function selectFishFromInventory(index) {
         // Добавляем модель рыбы в руку
         if (playerHandBone && fModel) {
             heldFishModel = fModel.clone();
-            // Масштабируем рыбу для руки (уменьшили по просьбе юзера с 80 до 50)
-            heldFishModel.scale.setScalar(50);
+            // Масштабируем рыбу для руки (уменьшили с 50 до 15 по просьбе юзера)
+            heldFishModel.scale.setScalar(15);
             // Позиция: нужно подправить, чтобы лежала в ладони
             heldFishModel.position.set(20.0, 45.0, 10.0);
             heldFishModel.rotation.set(0, Math.PI / 2, Math.PI / 4);
