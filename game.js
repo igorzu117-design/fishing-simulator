@@ -384,6 +384,10 @@ function init3D() {
         // Загружаем рыбу для превью
         gltfLoader.load('green_fish.glb', (gltf) => {
             fishModels['Herring'] = gltf.scene;
+            fishModels['common'] = gltf.scene;
+        });
+        gltfLoader.load('perch_weever_sea_bass_fish.glb', (gltf) => {
+            fishModels['uncommon'] = gltf.scene;
         });
 
         // Загружаем анимации держания рыбы
@@ -977,14 +981,43 @@ function catchFish() {
     if (fishIdleAction) fishIdleAction.stop();
     if (idleAction) idleAction.play();
 
+    let rarity = 'common';
+    let caught = false;
+    const rodObj = rodInventory.find(r => r.name === equippedRod);
+    if (rodObj && rodObj.stats) {
+        let pct = (str) => parseFloat(str) / 100;
+        let roll = Math.random();
+
+        if (rodObj.stats.epic && roll <= pct(rodObj.stats.epic)) { rarity = 'epic'; caught = true; }
+        else if (rodObj.stats.rare && roll <= pct(rodObj.stats.rare)) { rarity = 'rare'; caught = true; }
+        else if (rodObj.stats.uncommon && roll <= pct(rodObj.stats.uncommon)) { rarity = 'uncommon'; caught = true; }
+        else if (rodObj.stats.common && roll <= pct(rodObj.stats.common)) { rarity = 'common'; caught = true; }
+    } else {
+        caught = true;
+    }
+
+    if (!caught) {
+        console.log("Рыба сорвалась!");
+        return;
+    }
+
+    const FISH_DATA = {
+        common: { name: "Селёдка", icon: "🐟", priceBase: 20 },
+        uncommon: { name: "Морской окунь", icon: "🐠", priceBase: 60 },
+        rare: { name: "Золотая рыбка", icon: "🐡", priceBase: 150 },
+        epic: { name: "Мистический карп", icon: "🦈", priceBase: 500 }
+    };
+
+    let fishInfo = FISH_DATA[rarity] || FISH_DATA['common'];
     const weight = 0.5 + Math.random() * 1.5;
-    const price = Math.round(20 + (weight - 0.5) * (180 / 1.5));
+    const price = Math.round(fishInfo.priceBase + (weight - 0.5) * (fishInfo.priceBase * 5));
 
     const caughtFish = {
-        name: "Селёдка",
+        name: fishInfo.name,
+        rarity: rarity,
         weight: weight,
         price: price,
-        icon: "🐟"
+        icon: fishInfo.icon
     };
 
     inventory.push(caughtFish);
@@ -1013,9 +1046,12 @@ function showCatchWindow(fish) {
 
     if (catchPreviewFish) catchPreviewScene.remove(catchPreviewFish);
 
-    if (fishModels['Herring']) {
-        catchPreviewFish = fishModels['Herring'].clone();
-        catchPreviewFish.scale.setScalar(1.2); // Уменьшили размер (было 2)
+    const modelKey = fish.rarity || 'common';
+    const fModel = fishModels[modelKey] || fishModels['common'] || fishModels['Herring'];
+
+    if (fModel) {
+        catchPreviewFish = fModel.clone();
+        catchPreviewFish.scale.setScalar(1.2);
         catchPreviewScene.add(catchPreviewFish);
     }
 
@@ -1037,6 +1073,7 @@ function closeCatchWindow(event) {
     document.getElementById('catch-ui').classList.add('hidden');
 }
 
+let equippedRod = "Старая удочка";
 let activeRodPreviews = [];
 let rodInventory = [
     {
@@ -1289,6 +1326,7 @@ window.buyItem = function (type) {
                 }
             });
             renderRodsInventory();
+            equippedRod = "Бамбуковая удочка";
             replacePlayerRod("bamboo_fishing_rod.glb");
             // Assuming closeShop is accessible here, normally window.closeShop
             if (typeof closeShop === 'function') closeShop('rod-shop-ui');
@@ -1354,9 +1392,13 @@ function selectFishFromInventory(index) {
         isHoldingFish = true;
         if (fishingRod) fishingRod.visible = false;
 
+        const selectedFish = inventory[index];
+        const modelKey = selectedFish.rarity || 'common';
+        const fModel = fishModels[modelKey] || fishModels['common'] || fishModels['Herring'];
+
         // Добавляем модель рыбы в руку
-        if (playerHandBone && fishModels['Herring']) {
-            heldFishModel = fishModels['Herring'].clone();
+        if (playerHandBone && fModel) {
+            heldFishModel = fModel.clone();
             // Масштабируем рыбу для руки (уменьшили по просьбе юзера с 80 до 50)
             heldFishModel.scale.setScalar(50);
             // Позиция: нужно подправить, чтобы лежала в ладони
