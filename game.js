@@ -389,6 +389,9 @@ function init3D() {
         gltfLoader.load('perch_weever_sea_bass_fish.glb', (gltf) => {
             fishModels['uncommon'] = gltf.scene;
         });
+        gltfLoader.load('neon_tetra_aquarium_fish.glb', (gltf) => {
+            fishModels['rare'] = gltf.scene;
+        });
 
         // Загружаем анимации держания рыбы
         fbxLoader.load('Pistol Idle.fbx', (fbx) => {
@@ -1004,7 +1007,7 @@ function catchFish() {
     const FISH_DATA = {
         common: { name: "Селёдка", icon: "🐟", priceBase: 20 },
         uncommon: { name: "Морской окунь", icon: "🐠", priceBase: 60 },
-        rare: { name: "Золотая рыбка", icon: "🐡", priceBase: 150 },
+        rare: { name: "Неоновая рыба", icon: "🐡", priceBase: 150 },
         epic: { name: "Мистический карп", icon: "🦈", priceBase: 500 }
     };
 
